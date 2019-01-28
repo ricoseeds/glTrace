@@ -1,6 +1,4 @@
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <string>
 #include <vector>
 #include <cmath>
@@ -8,7 +6,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include "Vect.h"
 #include "Ray.h"
@@ -23,75 +22,15 @@
 
 using namespace std;
 
+
+#define SCREEN_WIDTH 1024
+#define SCREEN_HEIGHT 720
+
 struct RGBType {
 	double r;
 	double g;
 	double b;
 };
-
-void savebmp (const char *filename, int w, int h, int dpi, RGBType *data) {
-	FILE *f;
-	int k = w*h;
-	int s = 4*k;
-	int filesize = 54 + s;
-	
-	double factor = 39.375;
-	int m = static_cast<int>(factor);
-	
-	int ppm = dpi*m;
-	
-	unsigned char bmpfileheader[14] = {'B','M', 0,0,0,0, 0,0,0,0, 54,0,0,0};
-	unsigned char bmpinfoheader[40] = {40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,24,0};
-	
-	bmpfileheader[ 2] = (unsigned char)(filesize);
-	bmpfileheader[ 3] = (unsigned char)(filesize>>8);
-	bmpfileheader[ 4] = (unsigned char)(filesize>>16);
-	bmpfileheader[ 5] = (unsigned char)(filesize>>24);
-	
-	bmpinfoheader[ 4] = (unsigned char)(w);
-	bmpinfoheader[ 5] = (unsigned char)(w>>8);
-	bmpinfoheader[ 6] = (unsigned char)(w>>16);
-	bmpinfoheader[ 7] = (unsigned char)(w>>24);
-	
-	bmpinfoheader[ 8] = (unsigned char)(h);
-	bmpinfoheader[ 9] = (unsigned char)(h>>8);
-	bmpinfoheader[10] = (unsigned char)(h>>16);
-	bmpinfoheader[11] = (unsigned char)(h>>24);
-	
-	bmpinfoheader[21] = (unsigned char)(s);
-	bmpinfoheader[22] = (unsigned char)(s>>8);
-	bmpinfoheader[23] = (unsigned char)(s>>16);
-	bmpinfoheader[24] = (unsigned char)(s>>24);
-	
-	bmpinfoheader[25] = (unsigned char)(ppm);
-	bmpinfoheader[26] = (unsigned char)(ppm>>8);
-	bmpinfoheader[27] = (unsigned char)(ppm>>16);
-	bmpinfoheader[28] = (unsigned char)(ppm>>24);
-	
-	bmpinfoheader[29] = (unsigned char)(ppm);
-	bmpinfoheader[30] = (unsigned char)(ppm>>8);
-	bmpinfoheader[31] = (unsigned char)(ppm>>16);
-	bmpinfoheader[32] = (unsigned char)(ppm>>24);
-	
-	f = fopen(filename,"wb");
-	
-	fwrite(bmpfileheader,1,14,f);
-	fwrite(bmpinfoheader,1,40,f);
-	
-	for (int i = 0; i < k; i++) {
-		RGBType rgb = data[i];
-		
-		double red = (data[i].r)*255;
-		double green = (data[i].g)*255;
-		double blue = (data[i].b)*255;
-		
-		unsigned char color[3] = {(int)floor(blue),(int)floor(green),(int)floor(red)};
-		
-		fwrite(color,1,3,f);
-	}
-	
-	fclose(f);
-}
 
 int winningObjectIndex(vector<double> object_intersections) {
 	// return the index of the winning intersection
@@ -266,14 +205,52 @@ Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, ve
 
 int thisone;
 
-int main (int argc, char *argv[]) {
-	
+vector<vector<RGBType> > compute();
+// void savebmp();
+void drawPoint(double xpos, double ypos, GLubyte, GLubyte, GLubyte);
+void render(GLFWwindow *, vector<vector<RGBType> >);
+void sweep(vector<vector<RGBType>> );
 
+GLfloat adjustY(double yVal);
+int main (int argc, char *argv[]) {
+	GLFWwindow *window;
+    // Initialize the library
+    if ( !glfwInit( ) )
+    {
+        return -1;
+    }
+    // Create a windowed mode window and its OpenGL context
+    window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "RayTracer", NULL, NULL );
+    
+    if ( !window ) {
+        glfwTerminate( );
+        return -1;
+    }
+    
+    // Make the window's context current
+    glfwMakeContextCurrent( window );
+
+    // OpenGL specifics
+    glViewport( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT ); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
+    glMatrixMode( GL_PROJECTION ); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
+    glLoadIdentity(); // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
+    glOrtho( 0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, 0, 1 ); // essentially set coordinate system
+    glMatrixMode( GL_MODELVIEW ); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
+    
+	vector<vector<RGBType> > data;
+	data = compute();
+	render(window, data);
+	// render
+	return 0;
+}
+
+vector<vector<RGBType> > compute() {
+	
 	int dpi = 72;
-	int width = 1024;
-	int height = 720;
+	int width = SCREEN_WIDTH;
+	int height = SCREEN_HEIGHT;
 	int n = width*height;
-	RGBType *pixels = new RGBType[n];
+	// RGBType *pixels = new RGBType[n];
 	
 	int aadepth = 1;
 	double aathreshold = 0.1;
@@ -332,8 +309,10 @@ int main (int argc, char *argv[]) {
 	int thisone, aa_index;
 	double xamnt, yamnt;
 	double tempRed, tempGreen, tempBlue;
-	
+	vector<vector<RGBType> > sweepxy;
+	RGBType pixel;
 	for (int x = 0; x < width; x++) {
+		vector<RGBType> pixelx;
 		for (int y = 0; y < height; y++) {
 			thisone = y*width + x;
 			
@@ -341,6 +320,7 @@ int main (int argc, char *argv[]) {
 			double tempRed[aadepth*aadepth];
 			double tempGreen[aadepth*aadepth];
 			double tempBlue[aadepth*aadepth];
+			
 			
 			for (int aax = 0; aax < aadepth; aax++) {
 				for (int aay = 0; aay < aadepth; aay++) {
@@ -444,14 +424,66 @@ int main (int argc, char *argv[]) {
 			double avgGreen = totalGreen/(aadepth*aadepth);
 			double avgBlue = totalBlue/(aadepth*aadepth);
 			
-			pixels[thisone].r = avgRed;
-			pixels[thisone].g = avgGreen;
-			pixels[thisone].b = avgBlue;
+			pixel.r = avgRed;
+			pixel.g = avgGreen;
+			pixel.b = avgBlue;
+			pixelx.push_back(pixel);
+
 		}
+		sweepxy.push_back(pixelx);
 	}
 	
-	savebmp("scene_anti-aliased.bmp",width,height,dpi,pixels);
+	// savebmp("scene_anti-aliased.bmp",width,height,dpi,pixels);
 	//render
-	delete pixels, tempRed, tempGreen, tempBlue;
-	return 0;
+	return sweepxy;
+}
+
+
+
+void render(GLFWwindow *window, vector<vector<RGBType> > data){
+    while ( !glfwWindowShouldClose( window ) )
+    {
+        glClear( GL_COLOR_BUFFER_BIT );
+        // drawPoint(10,10, 255, 0, 0); // draws a single pixel in the screen 
+        sweep(data);
+        
+        // Swap front and back buffers
+        glfwSwapBuffers( window );
+    
+        // Poll for and process events
+        glfwPollEvents( );
+    }
+}
+
+GLfloat adjustY(double yVal){
+    return (GLfloat)(-yVal + SCREEN_HEIGHT);
+}
+
+void drawPoint(double xpos, double ypos, GLubyte red, GLubyte green, GLubyte blue){
+    // glEnable( GL_POINT_SMOOTH );
+    glPointSize( 1 );
+    glBegin(GL_POINTS);
+    glColor3ub( red, green, blue );
+    glVertex2i((GLfloat)xpos, adjustY(ypos));
+    // glRasterPos2s((GLfloat)xpos, adjustY(ypos));
+    glEnd();
+}
+
+void sweep(vector<vector<RGBType> > data){
+	for(size_t x = 0; x < data.size(); x++){
+		for(size_t y = 0; y < data[0].size(); y++) {
+			drawPoint(x, adjustY (y), data[x][y].r * 255, data[x][y].g * 255, data[x][y].b * 255);
+		}
+		
+	}
+	// 	for(size_t x = 0; x < SCREEN_WIDTH; x++){
+	// 	for(size_t y = 0; y < SCREEN_HEIGHT; y++) {
+	// 		drawPoint(x, y, 255, 0, 0 );
+	// 	}
+		
+	// }
+	// std::cout << data[10][10].r;
+	// std::cout << data[10][10].g;
+	// std::cout << data[10][10].b;
+	
 }
