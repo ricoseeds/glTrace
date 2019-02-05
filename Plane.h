@@ -8,18 +8,17 @@
 
 class Plane : public Object {
 	Vect normal;
-	double distance;
 	Color color;
 	
 	public:
 	
 	Plane ();
 	
-	Plane (Vect, double, Color);
+	Plane (Vect, Color);
 	
 	// method functions
 	Vect getPlaneNormal () { return normal; }
-	double getPlaneDistance () { return distance; }
+	// double getPlaneDistance () { return distance; }
 	virtual Color getColor () { return color; }
 	
 	virtual Vect getNormalAt(Vect point) {
@@ -36,7 +35,7 @@ class Plane : public Object {
 			return -1;
 		}
 		else {
-			double b = normal.dotProduct(ray.getRayOrigin().vectAdd(normal.vectMult(distance).negative()));
+			double b = normal.dotProduct(ray.getRayOrigin().vectAdd(normal));
 			return -1*b/a;
 		}
 	}
@@ -45,13 +44,11 @@ class Plane : public Object {
 
 Plane::Plane () {
 	normal = Vect(1,0,0);
-	distance = 0;
 	color = Color(0.5,0.5,0.5, 0);
 }
 
-Plane::Plane (Vect normalValue, double distanceValue, Color colorValue) {
+Plane::Plane(Vect normalValue, Color colorValue) {
 	normal = normalValue;
-	distance = distanceValue;
 	color = colorValue;
 }
 

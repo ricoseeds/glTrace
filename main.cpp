@@ -34,7 +34,8 @@ struct RGBType {
 
 int winningObjectIndex(vector<double> object_intersections) {
 	// return the index of the winning intersection
-	int index_of_minimum_value;
+	
+
 	
 	// prevent unnessary calculations
 	if (object_intersections.size() == 0) {
@@ -54,11 +55,11 @@ int winningObjectIndex(vector<double> object_intersections) {
 	else {
 		// otherwise there is more than one intersection
 		// first find the maximum value
-		
+		int index_of_minimum_value;
 		double max = 0;
 		for (int i = 0; i < object_intersections.size(); i++) {
-			if (max < object_intersections.at(i)) {
-				max = object_intersections.at(i);
+			if (max < object_intersections[i]) {
+				max = object_intersections[i];
 			}
 		}
 		
@@ -66,8 +67,8 @@ int winningObjectIndex(vector<double> object_intersections) {
 		if (max > 0) {
 			// we only want positive intersections
 			for (int index = 0; index < object_intersections.size(); index++) {
-				if (object_intersections.at(index) > 0 && object_intersections.at(index) <= max) {
-					max = object_intersections.at(index);
+				if (object_intersections[index] > 0 && object_intersections[index] <= max) {
+					max = object_intersections[index];
 					index_of_minimum_value = index;
 				}
 			}
@@ -78,13 +79,66 @@ int winningObjectIndex(vector<double> object_intersections) {
 			// all the intersections were negative
 			return -1;
 		}
+		// int index = 0;
+		// double min = object_intersections[index];
+		// bool flag = false;
+		// for(size_t i = 0; i < object_intersections.size(); i++)
+		// {
+		// 	if ( object_intersections[i] > 0 && object_intersections[i] <= min ) {
+		// 		min = object_intersections[i];
+		// 		index = i;
+		// 		flag = true;
+		// 	}
+		// }
+		// if(flag == false ){
+		// 	return index;
+		// }else{
+		// 	return -1;
+		// }
+	
 	}
 }
+double determine_max(vector<double> );
+int get_closest_index(vector<double> intersection_data){
+	if (intersection_data.size() == 0) {
+		return -1;
+	}
+	else if (intersection_data.size() == 1) {
+		return (intersection_data[0] > 0) ? 0 : -1 ; 
+	}
+	else {
+		int index_of_minimum_value;
+		double max = determine_max(intersection_data);
+		if (max > 0) {
+			for (int index = 0; index < intersection_data.size(); index++) {
+				if (intersection_data[index] > 0 && intersection_data[index] <= max) {
+					max = intersection_data[index];
+					index_of_minimum_value = index;
+				}
+			}
+			return index_of_minimum_value;
+		}
+		else {
+			return -1;
+    	}
+	}    
+}
+
+double determine_max(vector<double> data) {
+    double max = INT64_MIN;
+    for (int i = 0; i < data.size(); i++) {
+        if (max < data[i]) {
+            max = data[i];
+        }
+    }
+    return max;
+}
+
 
 Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, vector<Object*> scene_objects, int index_of_winning_object, vector<Source*> light_sources, double accuracy, double ambientlight) {
 	
-	Color winning_object_color = scene_objects.at(index_of_winning_object)->getColor();
-	Vect winning_object_normal = scene_objects.at(index_of_winning_object)->getNormalAt(intersection_position);
+	Color winning_object_color = scene_objects[index_of_winning_object]->getColor();
+	Vect winning_object_normal = scene_objects[index_of_winning_object]->getNormalAt(intersection_position);
 	
 	if (winning_object_color.getColorSpecial() == 2) {
 		// checkered/tile floor pattern
@@ -129,7 +183,8 @@ Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, ve
 			reflection_intersections.push_back(scene_objects.at(reflection_index)->findIntersection(reflection_ray));
 		}
 		
-		int index_of_winning_object_with_reflection = winningObjectIndex(reflection_intersections);
+		// int index_of_winning_object_with_reflection = winningObjectIndex(reflection_intersections);
+		int index_of_winning_object_with_reflection = get_closest_index(reflection_intersections);
 		
 		if (index_of_winning_object_with_reflection != -1) {
 			// reflection ray missed everthing else
@@ -298,7 +353,7 @@ vector<vector<RGBType> > compute() {
 	Sphere scene_sphere3 (new_sphere_location2, 0.5, blue);
 	
 	// Plane scene_plane (X, -1, tile_floor);
-	Plane scene_plane2 (plane_loc, -1, white_light);
+	Plane scene_plane2 (plane_loc, white_light);
 	vector<Object*> scene_objects;
 	scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere));
 	scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere2));
@@ -379,28 +434,29 @@ vector<vector<RGBType> > compute() {
 						intersections.push_back(scene_objects.at(index)->findIntersection(cam_ray));
 					}
 					
-					int index_of_winning_object = winningObjectIndex(intersections);
+					unsigned int index_of_winning_object = get_closest_index(intersections);
 					
 					if (index_of_winning_object == -1) {
 						// set the backgroung black
-						tempRed[aa_index] = 0;
+						// tempRed[aa_index] = tempGreen[aa_index] =tempBlue[aa_index] = 0;
+						tempRed[aa_index] =0; 
 						tempGreen[aa_index] = 0;
 						tempBlue[aa_index] = 0;
 					}
-					else{
+					else if (intersections[index_of_winning_object] ) {
 						// index coresponds to an object in our scene
-						if (intersections.at(index_of_winning_object) > accuracy) {
+						// if (intersections.at(index_of_winning_object) > accuracy) {
 							// determine the position and direction vectors at the point of intersection
 							
-							Vect intersection_position = cam_ray_origin.vectAdd(cam_ray_direction.vectMult(intersections.at(index_of_winning_object)));
-							Vect intersecting_ray_direction = cam_ray_direction;
-		
-							Color intersection_color = getColorAt(intersection_position, intersecting_ray_direction, scene_objects, index_of_winning_object, light_sources, accuracy, ambientlight);
-							
-							tempRed[aa_index] = intersection_color.getColorRed();
-							tempGreen[aa_index] = intersection_color.getColorGreen();
-							tempBlue[aa_index] = intersection_color.getColorBlue();
-						}
+						Vect intersection_position = cam_ray_origin.vectAdd(cam_ray_direction.vectMult(intersections.at(index_of_winning_object)));
+						Vect intersecting_ray_direction = cam_ray_direction;
+	
+						Color intersection_color = getColorAt(intersection_position, intersecting_ray_direction, scene_objects, index_of_winning_object, light_sources, accuracy, ambientlight);
+						
+						tempRed[aa_index] = intersection_color.getColorRed();
+						tempGreen[aa_index] = intersection_color.getColorGreen();
+						tempBlue[aa_index] = intersection_color.getColorBlue();
+						// }
 					}
 				}
 			}
