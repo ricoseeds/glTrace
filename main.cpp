@@ -18,7 +18,8 @@
 #include "Object.h"
 #include "Sphere.h"
 #include "Plane.h"
-
+#include "Quadric.h"
+#include "Triangle.h"
 
 using namespace std;
 
@@ -227,8 +228,9 @@ Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, ve
 					if (secondary_intersections.at(c) <= distance_to_light_magnitude) {
 						shadowed = true;
 					}
+					break;
 				}
-				break;
+				
 			}
 			
 			if (shadowed == false) {
@@ -321,9 +323,9 @@ vector<vector<RGBType> > compute() {
 	Vect new_sphere_location (1.75, -0.25, 0);
 	Vect new_sphere_location2 (2.75, -0.80, 0);
 	Vect plane_loc(0.2, 1, 0.1);
-	Vect campos (3, 1.5, -4);
+	Vect campos (3, 1.5, -20);
 	
-	Vect look_at (0, 0, 0);
+	Vect look_at (0, 6, 0);
 	Vect diff_btw (campos.getVectX() - look_at.getVectX(), campos.getVectY() - look_at.getVectY(), campos.getVectZ() - look_at.getVectZ());
 	
 	Vect camdir = diff_btw.negative().normalize();
@@ -338,7 +340,7 @@ vector<vector<RGBType> > compute() {
 	Color gray (0.5, 0.5, 0.5, 0);
 	Color black (0.0, 0.0, 0.0, 0);
 	Color blue (0.0, 0.0, 1.0, 0.4);
-	
+	Color vio(0.8, 0.4, 0.5, 0.0);
 	Vect light_position (-7,10,-10);
 	Vect light_position2 (-7,10,10);
 	Light scene_light (light_position, white_light);
@@ -346,20 +348,28 @@ vector<vector<RGBType> > compute() {
 	vector<Source*> light_sources;
 	light_sources.push_back(dynamic_cast<Source*>(&scene_light));
 	light_sources.push_back(dynamic_cast<Source*>(&scene_light2));
+	Quadric qq;
 	
 	// scene objects
 	Sphere scene_sphere (Z, 1, pretty_green);
 	Sphere scene_sphere2 (new_sphere_location, 0.5, maroon);
 	Sphere scene_sphere3 (new_sphere_location2, 0.5, blue);
+	int b = 8, a = 6;
+	Triangle tri(Vect(-b, 0, 0), Vect(-b, 0, a), Vect(a-b, 0, 0), vio);
+	Triangle tri2(Vect(a-b, 0, 0), Vect(-b, 0, a), Vect(a-b, 0, a), vio);
 	
 	// Plane scene_plane (X, -1, tile_floor);
-	Plane scene_plane2 (plane_loc, white_light);
+	// Plane scene_plane2 (plane_loc, white_light);
+	Plane scene_plane2 (Y.vectAdd(Vect(0, 5, 0)), white_light);
 	vector<Object*> scene_objects;
 	scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere));
 	scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere2));
 	// scene_objects.push_back(dynamic_cast<Object*>(&scene_plane));
 	scene_objects.push_back(dynamic_cast<Object*>(&scene_plane2));
 	scene_objects.push_back(dynamic_cast<Object*>(&scene_sphere3));
+	scene_objects.push_back(dynamic_cast<Object*>(&qq));
+	scene_objects.push_back(dynamic_cast<Object*>(&tri));
+	scene_objects.push_back(dynamic_cast<Object*>(&tri2));
 	
 	int thisone, aa_index;
 	double xamnt, yamnt;
@@ -382,7 +392,6 @@ vector<vector<RGBType> > compute() {
 			
 					aa_index = aay*aadepth + aax;
 					
-					srand(time(0));
 					
 					// create the ray from the camera to this pixel
 					if (aadepth == 1) {
