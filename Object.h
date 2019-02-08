@@ -7,7 +7,7 @@
 
 class Object {	
 	public:
-	
+	Color color;
 	Object ();
 	
 	// method functions
