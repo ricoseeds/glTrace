@@ -1,26 +1,4 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <cmath>
-#include <limits>
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include "Vect.h"
-#include "Ray.h"
-#include "Camera.h"
-#include "Color.h"
-// #include "Source.h"
-#include "Light.h"
-#include "Object.h"
-#include "Sphere.h"
-#include "Plane.h"
-#include "Quadric.h"
-#include "Triangle.h"
-
+#include "main.h"
 using namespace std;
 
 
@@ -33,137 +11,11 @@ struct RGBType {
 	double b;
 };
 
-int winningObjectIndex(vector<double> object_intersections) {
-	// return the index of the winning intersection
-	
 
-	
-	// prevent unnessary calculations
-	if (object_intersections.size() == 0) {
-		// if there are no intersections
-		return -1;
-	}
-	else if (object_intersections.size() == 1) {
-		if (object_intersections.at(0) > 0) {
-			// if that intersection is greater than zero then its our index of minimum value
-			return 0;
-		}
-		else {
-			// otherwise the only intersection value is negative
-			return -1;
-		}
-	}
-	else {
-		// otherwise there is more than one intersection
-		// first find the maximum value
-		int index_of_minimum_value;
-		double max = 0;
-		for (int i = 0; i < object_intersections.size(); i++) {
-			if (max < object_intersections[i]) {
-				max = object_intersections[i];
-			}
-		}
-		
-		// then starting from the maximum value find the minimum positive value
-		if (max > 0) {
-			// we only want positive intersections
-			for (int index = 0; index < object_intersections.size(); index++) {
-				if (object_intersections[index] > 0 && object_intersections[index] <= max) {
-					max = object_intersections[index];
-					index_of_minimum_value = index;
-				}
-			}
-			
-			return index_of_minimum_value;
-		}
-		else {
-			// all the intersections were negative
-			return -1;
-		}
-		// int index = 0;
-		// double min = object_intersections[index];
-		// bool flag = false;
-		// for(size_t i = 0; i < object_intersections.size(); i++)
-		// {
-		// 	if ( object_intersections[i] > 0 && object_intersections[i] <= min ) {
-		// 		min = object_intersections[i];
-		// 		index = i;
-		// 		flag = true;
-		// 	}
-		// }
-		// if(flag == false ){
-		// 	return index;
-		// }else{
-		// 	return -1;
-		// }
-	
-	}
-}
-double determine_max(vector<double> );
-int get_closest_index(vector<double> intersection_data){
-	if (intersection_data.size() == 0) {
-		return -1;
-	}
-	else if (intersection_data.size() == 1) {
-		return (intersection_data[0] > 0) ? 0 : -1 ; 
-	}
-	else {
-		int index_of_minimum_value;
-		double max = determine_max(intersection_data);
-		if (max > 0) {
-			for (int index = 0; index < intersection_data.size(); index++) {
-				if (intersection_data[index] > 0 && intersection_data[index] <= max) {
-					max = intersection_data[index];
-					index_of_minimum_value = index;
-				}
-			}
-			return index_of_minimum_value;
-		}
-		else {
-			return -1;
-    	}
-	}    
-}
-
-double determine_max(vector<double> data) {
-    double max = INT64_MIN;
-    for (int i = 0; i < data.size(); i++) {
-        if (max < data[i]) {
-            max = data[i];
-        }
-    }
-    return max;
-}
-
-
-Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, vector<Object*> scene_objects, int index_of_winning_object, vector<Source*> light_sources, double accuracy, double ambientlight) {
+Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, vector<Object*> scene_objects, int index_of_winning_object, vector<Light*> light_sources, double accuracy, double ambientlight) {
 	
 	Color winning_object_color = scene_objects[index_of_winning_object]->getColor();
 	Vect winning_object_normal = scene_objects[index_of_winning_object]->getNormalAt(intersection_position);
-	
-	if (winning_object_color.getColorSpecial() == 2) {
-		// checkered/tile floor pattern
-		
-		int square = (int)floor(intersection_position.getVectX()) + (int)floor(intersection_position.getVectZ());
-		
-		// if ((square % 2) == 0) {
-		// 	// black tile
-		// 	winning_object_color.setColorRed(0);
-		// 	winning_object_color.setColorGreen(0);
-		// 	winning_object_color.setColorBlue(0);
-		// }
-		// else {
-		// 	// white tile
-		// 	winning_object_color.setColorRed(1);
-		// 	winning_object_color.setColorGreen(1);
-		// 	winning_object_color.setColorRed(1);
-		// }
-			// winning_object_color.setColorRed(1);
-			// winning_object_color.setColorGreen(1);
-			// winning_object_color.setColorRed(1);
-
-	}
-	
 	Color final_color = winning_object_color.colorScalar(ambientlight);
 	
 	if (winning_object_color.getColorSpecial() > 0 && winning_object_color.getColorSpecial() <= 1) {
@@ -345,9 +197,9 @@ vector<vector<RGBType> > compute() {
 	Vect light_position2 (-7,10,10);
 	Light scene_light (light_position, white_light);
 	Light scene_light2 (light_position2, white_light);
-	vector<Source*> light_sources;
-	light_sources.push_back(dynamic_cast<Source*>(&scene_light));
-	light_sources.push_back(dynamic_cast<Source*>(&scene_light2));
+	vector<Light*> light_sources;
+	light_sources.push_back(dynamic_cast<Light*>(&scene_light));
+	light_sources.push_back(dynamic_cast<Light*>(&scene_light2));
 	Quadric qq;
 	
 	// scene objects
