@@ -19,6 +19,7 @@ void sweep(vector<vector<RGBType>> );
 
 GLfloat adjustY(double yVal);
 int main (int argc, char *argv[]) {
+	string filepath = argv[1];
 	GLFWwindow *window;
     // Initialize the library
     if ( !glfwInit( ) )
@@ -29,8 +30,8 @@ int main (int argc, char *argv[]) {
 	int width, height;
 	double ambientlight;
     // window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "RayTracer", NULL, NULL );
-		vector<Object *> scene_onjects;
-	get_data(width, height, ambientlight, scene_onjects);
+	vector<Object *> scene_onjects;
+	get_data(filepath, width, height, ambientlight, scene_onjects);
     window = glfwCreateWindow( width, height, "RayTracer", NULL, NULL );
     
     if ( !window ) {

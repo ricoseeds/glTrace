@@ -23,6 +23,7 @@
 #include "json.hpp"
 
 
+using json = nlohmann::json;
 
 using namespace std;
 
@@ -38,50 +39,40 @@ const Vect Y (0,1,0);
 const Vect Z (0,0,1);
 
 vector<vector<RGBType> > compute(int, int, double, vector<Object *>&);
-void get_data(int&, int&, double&, vector<Object *>&);
+void get_data(string, int&, int&, double&, vector<Object *>&);
 int get_closest_index(vector<double> );
-void get_data(int &width, int &height, double &ambientlight, vector<Object *> &scene_objects){
-	width = 1024;
-	height = 720;
-	ambientlight = 0.2;
-
-
-
-	Color white_light (1.0, 1.0, 1.0, 0.0);
-	Color pretty_green (0.0, 1.0, 0.0, 0.5);
-	Color maroon (1.0, 0.0, 0.0, 0.5);
-	Color tile_floor (1, 1, 1, 2);
-	Color gray (0.5, 0.5, 0.5, 0);
-	Color black (0.0, 0.0, 0.0, 0);
-	Color blue (0.0, 0.0, 1.0, 0.4);
-	Color blue_solid (0.0, 0.0, 1.0, 0);
-	Color vio(0.8, 0.4, 0.5, 0.0);
-
-	Vect new_sphere_location (1.75, -0.25, 0);
-	Vect new_sphere_location2 (2.75, -0.80, 0);
-	Vect plane_loc(0.2, 1, 0.1);
-
-	Sphere *scene_sphere = new Sphere(Z, 1, pretty_green);
-	Sphere *scene_sphere2 = new Sphere(new_sphere_location.vectAdd(Vect(4, 5, -10)), 2, Color(0,0,0,1));
-	Sphere *scene_sphere3 = new Sphere(new_sphere_location2, 0.5, blue);
-	int b = 8, a = 6;
-	Triangle *tri = new Triangle(Vect(-b, 0, 0), Vect(-b, 0, a), Vect(a-b, 0, 0), vio);
-	Triangle *tri2 = new Triangle(Vect(a-b, 0, 0), Vect(-b, 0, a), Vect(a-b, 0, a), vio);
-	Triangle *tri3 = new Triangle(Vect(b, 0, 0), Vect(b + 4, 0, 0), Vect(b + 2, 4, 0), blue_solid);
-	Triangle *tri4 = new Triangle(Vect(b, 4, 0), Vect(b + 4, 4, 0), Vect(b + 2, 9, 0), blue_solid);
-	Plane *scene_plane2 = new Plane(Vect(Y).vectAdd(Vect(0, 5, 0)), white_light);
-	Quadric *qq = new Quadric();
-	scene_objects.push_back(dynamic_cast<Object*>(scene_sphere));
-	scene_objects.push_back(dynamic_cast<Object*>(scene_sphere2));
-	scene_objects.push_back(dynamic_cast<Object*>(scene_plane2));
-	scene_objects.push_back(dynamic_cast<Object*>(scene_sphere3));
-	scene_objects.push_back(dynamic_cast<Object*>(qq));
-	scene_objects.push_back(dynamic_cast<Object*>(tri));
-	scene_objects.push_back(dynamic_cast<Object*>(tri2));
-	scene_objects.push_back(dynamic_cast<Object*>(tri3));
-	scene_objects.push_back(dynamic_cast<Object*>(tri4));
-	
-
+void get_data(string filepath, int &width, int &height, double &ambientlight, vector<Object *> &scene_objects){
+    std::ifstream ifs(filepath);
+    json j = json::parse(ifs);
+    width = (int) j["width"];
+    height = (int) j["height"];
+	ambientlight = (double) j["ambient_light"];
+	for (auto& x : json::iterator_wrapper(j["scene"])) {
+		for (auto& y : json::iterator_wrapper(x.value())) {
+			if (y.key() == "Sphere"){
+				Vect pos(y.value()["position"][0], y.value()["position"][1], y.value()["position"][2]);
+				Color col(y.value()["color"][0], y.value()["color"][1], y.value()["color"][2], y.value()["color"][3]);
+				Sphere *sphere = new Sphere(pos, (double)y.value()["radius"], col);
+				scene_objects.push_back(dynamic_cast<Object*>(sphere));
+			} else if(y.key() == "Plane"){
+				Vect normal(y.value()["normal"][0], y.value()["normal"][1], y.value()["normal"][2]);
+				Color col(y.value()["color"][0], y.value()["color"][1], y.value()["color"][2], y.value()["color"][3]);
+				Plane *plane = new Plane(normal, col);
+				scene_objects.push_back(dynamic_cast<Object*>(plane));
+			} else if(y.key() == "Quadric"){
+				Color col(y.value()["color"][0], y.value()["color"][1], y.value()["color"][2], y.value()["color"][3]);
+				Quadric *qq = new Quadric((double)y.value()["A"], (double)y.value()["B"], (double)y.value()["C"], (double)y.value()["D"], (double)y.value()["E"], (double)y.value()["F"],  (double)y.value()["G"],  (double)y.value()["H"],  (double)y.value()["I"],  (double)y.value()["J"], col);
+				scene_objects.push_back(dynamic_cast<Object*>(qq));
+			} else if(y.key() == "Triangle"){
+				Vect posX(y.value()["pos_x"][0], y.value()["pos_x"][1], y.value()["pos_x"][2]);
+				Vect posY(y.value()["pos_y"][0], y.value()["pos_y"][1], y.value()["pos_y"][2]);
+				Vect posZ(y.value()["pos_z"][0], y.value()["pos_z"][1], y.value()["pos_z"][2]);
+				Color col(y.value()["color"][0], y.value()["color"][1], y.value()["color"][2], y.value()["color"][3]);
+				Triangle *tri = new Triangle(posX, posY, posZ, col);
+				scene_objects.push_back(dynamic_cast<Object*>(tri));
+			}
+		}
+    }
 }
 
 

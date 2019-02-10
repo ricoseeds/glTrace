@@ -7,6 +7,7 @@
 #include "Color.h"
 #include <iostream>
 
+// using namespace std;
 class Quadric : public Object
 {
   double A, B, C, D, E, F, G, H, I, J;
@@ -15,12 +16,13 @@ class Quadric : public Object
 public:
   Quadric();
   Quadric(double a, double b, double c, double d, double e, double f, double g, double h, double i, double j, Color col ){
-    A = a; B = b; C = c; D = d; E = e; F = f; I = i, J = j;
+    A = a; B = b; C = c; D = d; E = e; F = f; G = g; H = h; I = i, J = j;
     color = col;
   }
 
   Vect getNormalAt(Vect point) override
   {
+    //From Siggraph
     // point = (Xi, Yi, Zi)
     // xn = 2 *A *xi + D *yi + E *zi + G
     // yn = 2 *B *yi + D *xi + F *zi + H
@@ -86,6 +88,7 @@ public:
 
 Quadric::Quadric()
 {
+  //For testing
   double scale = 10.0;
   A = (double)(100.0 / scale);
   B = (double)(5.0 / scale);

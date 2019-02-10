@@ -1,0 +1,76 @@
+
+{
+    "height" : 400,
+    "width" : 700,
+    "camera" :{
+        "position" : [],
+        "lookat" : []
+    },
+    "ambient_light" : 0.2,
+    "scene" : [
+        {
+            "Sphere" : {
+                "radius" : 1,
+                "color" : [0.0, 1.0, 0.0, 0.5],
+                "position" : [0, 0, 1]
+            }
+        },
+        {
+            "Sphere" : {
+                "radius" : 2,
+                "color" : [0,0,0,1],
+                "position" : [5.75, 4.75, -10]
+            }
+        },    
+        {
+            "Sphere" : {
+                "radius" : 0.5,
+                "color" : [0.0, 0.0, 1.0, 0.4],
+                "position" : [2.75, -0.80, 0]
+            }
+        },
+        {
+            "Plane" : {
+                "normal" : [0.2, 1, 0.1],
+                "color" : [1.0, 1.0, 1.0, 0.0]
+            }
+        },
+        {
+            "Quadric" : {
+                "color" : [1.0, 1.0, 0.0, 0.4],
+                "A": 10,
+                "B": 0.5,
+                "C": 0.4,
+                "D": 0,
+                "E": 0,
+                "F": 0,
+                "G": -20,
+                "H": -10,
+                "I": -0.8,
+                "J": 10.4
+            }
+        },
+        {
+            "Triangle" : {
+                "pos_x" : [8, 0, 0],
+                "pos_y" : [12, 0, 0],
+                "pos_z" : [10, 4, 0],
+                "color" : [0, 0.1, 0.8, 0] 
+            }
+        }
+    ],
+    "light" : [
+        {
+            "position" :[],
+            "color" :[]
+        },
+        {
+            "position" :[],
+            "color" :[]
+        },
+        {
+            "position" :[],
+            "color" :[]
+        }
+    ]
+}
