@@ -35,6 +35,8 @@ const Vect X (1,0,0);
 const Vect Y (0,1,0);
 const Vect Z (0,0,1);
 
+int width, height;
+double ambientlight;
 Vect cpos, look;
 vector<Light *> light_sources;
 vector<vector<RGBType> > compute(int, int, double, vector<Object *>&);

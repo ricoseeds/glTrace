@@ -1,22 +1,10 @@
 #include "../headers/main.h"
-// #include "json.hpp"
 
 using namespace std;
 
-
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 720
-
-
-
-
-
-// vector<vector<RGBType> > compute();
-// void savebmp();
 void drawPoint(double xpos, double ypos, GLubyte, GLubyte, GLubyte);
 void render(GLFWwindow *, vector<vector<RGBType> >);
 void sweep(vector<vector<RGBType>> );
-
 GLfloat adjustY(double yVal);
 int main (int argc, char *argv[]) {
 	string filepath = argv[1];
@@ -27,8 +15,6 @@ int main (int argc, char *argv[]) {
         return -1;
     }
     // Create a windowed mode window and its OpenGL context
-	int width, height;
-	double ambientlight;
     // window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "RayTracer", NULL, NULL );
 	vector<Object *> scene_objects;
 	get_data(filepath, width, height, ambientlight, scene_objects);
@@ -43,10 +29,10 @@ int main (int argc, char *argv[]) {
     glfwMakeContextCurrent( window );
 
     // OpenGL specifics
-    glViewport( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT ); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
+    glViewport( 0.0f, 0.0f, width, height ); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
     glMatrixMode( GL_PROJECTION ); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
     glLoadIdentity(); // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
-    glOrtho( 0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, 0, 1 ); // essentially set coordinate system
+    glOrtho( 0, width, 0, height, 0, 1 ); // essentially set coordinate system
     glMatrixMode( GL_MODELVIEW ); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
     
 	vector<vector<RGBType> > data;
@@ -74,7 +60,7 @@ void render(GLFWwindow *window, vector<vector<RGBType> > data){
 }
 
 GLfloat adjustY(double yVal){
-    return (GLfloat)(-yVal + SCREEN_HEIGHT);
+    return (GLfloat)(-yVal + height);
 }
 
 void drawPoint(double xpos, double ypos, GLubyte red, GLubyte green, GLubyte blue){
@@ -94,14 +80,4 @@ void sweep(vector<vector<RGBType> > data){
 		}
 		
 	}
-	// 	for(size_t x = 0; x < SCREEN_WIDTH; x++){
-	// 	for(size_t y = 0; y < SCREEN_HEIGHT; y++) {
-	// 		drawPoint(x, y, 255, 0, 0 );
-	// 	}
-		
-	// }
-	// std::cout << data[10][10].r;
-	// std::cout << data[10][10].g;
-	// std::cout << data[10][10].b;
-	
 }
