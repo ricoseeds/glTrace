@@ -3,8 +3,8 @@
     "height" : 400,
     "width" : 700,
     "camera" :{
-        "position" : [],
-        "lookat" : []
+        "position" : [3, 1.5, -20],
+        "lookat" : [8, 6, 0]
     },
     "ambient_light" : 0.2,
     "scene" : [
@@ -62,11 +62,11 @@
     "light" : [
         {
             "position" :[-7, 10, -10],
-            "color" :[1.0, 0.0, 0.0, 0.0]
+            "color" :[1.0, 1.0, 1.0, 0.0]
         },
         {
             "position" :[-7, 10, 10],
-            "color" :[1.0, 1.0, 0.0, 0.0]
+            "color" :[1.0, 1.0, 1.0, 0.0]
         }
     ]
 }

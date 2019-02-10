@@ -38,6 +38,7 @@ const Vect X (1,0,0);
 const Vect Y (0,1,0);
 const Vect Z (0,0,1);
 
+Vect cpos, look;
 vector<Light *> light_sources;
 vector<vector<RGBType> > compute(int, int, double, vector<Object *>&);
 void get_data(string, int&, int&, double&, vector<Object *>&);
@@ -81,6 +82,8 @@ void get_data(string filepath, int &width, int &height, double &ambientlight, ve
 		Light *newLight =new Light(pos, col);
 		light_sources.push_back(dynamic_cast<Light*>(newLight));
 	}
+	cpos = Vect((double)j["camera"]["position"][0], (double)j["camera"]["position"][1], (double)j["camera"]["position"][2]);
+	look = Vect((double)j["camera"]["lookat"][0], (double)j["camera"]["lookat"][1], (double)j["camera"]["lookat"][2]);
 
 }
 
@@ -239,9 +242,11 @@ vector<vector<RGBType> > compute(int width, int height, double ambientlight, vec
 	// Vect new_sphere_location (1.75, -0.25, 0);
 	// Vect new_sphere_location2 (2.75, -0.80, 0);
 	// Vect plane_loc(0.2, 1, 0.1);
-	Vect campos (3, 1.5, -20);
+	// Vect campos (3, 1.5, -20);
 	
-	Vect look_at (0, 6, 0);
+	// Vect look_at (0, 6, 0);
+	Vect campos(cpos);
+	Vect look_at(look);
 	Vect diff_btw (campos.getVectX() - look_at.getVectX(), campos.getVectY() - look_at.getVectY(), campos.getVectZ() - look_at.getVectZ());
 	
 	Vect camdir = diff_btw.negative().normalize();

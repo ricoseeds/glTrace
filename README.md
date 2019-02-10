@@ -9,7 +9,7 @@ Run :
 
 Example input :
 
-
+```javascript
 {
     "height" : 400,
     "width" : 700,
@@ -85,3 +85,4 @@ Example input :
         }
     ]
 }
+```
