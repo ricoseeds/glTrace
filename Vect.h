@@ -11,7 +11,7 @@ class Vect {
 	Vect ();
 	
 	Vect (double, double, double);
-	
+	Vect(const Vect &v2) {x = v2.x; y = v2.y; z = v2.z; }
 	// method functions
 	double getVectX() { return x; }
 	double getVectY() { return y; }
