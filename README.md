@@ -1,12 +1,15 @@
-Scene File Example :
+###### Scene File Example :
+```
     $ mv input.json.example input.json
-
-Compile :
+```
+###### Compile :
+```
     project_path>$ g++ main.cpp -std=c++11 -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -lGLEW
-
-Run : 
+```
+###### Run :
+``` 
     ./a.out ./input.json
-
+```
 Example input :
 
 ```javascript
@@ -14,8 +17,8 @@ Example input :
     "height" : 400,
     "width" : 700,
     "camera" :{
-        "position" : [],
-        "lookat" : []
+        "position" : [3, 1.5, -20],
+        "lookat" : [8, 6, 0]
     },
     "ambient_light" : 0.2,
     "scene" : [
@@ -72,16 +75,12 @@ Example input :
     ],
     "light" : [
         {
-            "position" :[],
-            "color" :[]
+            "position" :[-7, 10, -10],
+            "color" :[1.0, 1.0, 1.0, 0.0]
         },
         {
-            "position" :[],
-            "color" :[]
-        },
-        {
-            "position" :[],
-            "color" :[]
+            "position" :[-7, 10, 10],
+            "color" :[1.0, 1.0, 1.0, 0.0]
         }
     ]
 }
