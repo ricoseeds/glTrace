@@ -10,7 +10,11 @@
 ``` 
     ./a.out ./input.json
 ```
-##### Example input :
+##### Rendered Output
+
+![screenshot from 2019-02-11 03 15 03](https://user-images.githubusercontent.com/17334660/52540071-7fe6cb00-2dab-11e9-8f7e-fe9eb39c88c6.png)
+
+##### Example Input :
 
 ```javascript
 {
