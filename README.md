@@ -1,14 +1,14 @@
 ###### Scene File Example :
 ```
-    $ mv input.json.example input.json
+    $ mv input/input.json.example input/input.json
 ```
 ###### Compile :
 ```
-    project_path>$ g++ main.cpp -std=c++11 -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -lGLEW
+    project_path>$ g++ src/main.cpp -std=c++11 -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -lGLEW
 ```
 ###### Run :
 ``` 
-    ./a.out ./input.json
+    ./a.out ./input/input.json
 ```
 ##### Rendered Output
 
