@@ -221,48 +221,22 @@ Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, ve
 
 vector<vector<RGBType> > compute(int width, int height, double ambientlight, vector<Object *>&scene_objects ) {
 	
-	// int dpi = 72;
-	// int width = SCREEN_WIDTH;
-	// int height = SCREEN_HEIGHT;
 
-	int n = width*height;
-	// RGBType *pixels = new RGBType[n];
+	// int n = width*height;
+
 	
 	int aadepth = 1;
 	double aathreshold = 0.1;
 	double aspectratio = (double)width/(double)height;
-	// double ambientlight = 0.2;
 	double accuracy = 0.00000001;
-	
-	Vect O (0,0,0);
-	Vect X (1,0,0);
-	Vect Y (0,1,0);
-	Vect Z (0,0,1);
-	
-	// Vect new_sphere_location (1.75, -0.25, 0);
-	// Vect new_sphere_location2 (2.75, -0.80, 0);
-	// Vect plane_loc(0.2, 1, 0.1);
-	// Vect campos (3, 1.5, -20);
-	
-	// Vect look_at (0, 6, 0);
 	Vect campos(cpos);
 	Vect look_at(look);
 	Vect diff_btw (campos.getVectX() - look_at.getVectX(), campos.getVectY() - look_at.getVectY(), campos.getVectZ() - look_at.getVectZ());
 	
 	Vect camdir = diff_btw.negative().normalize();
-	Vect camright = Y.crossProduct(camdir).normalize();
+	Vect camright = Vect(Y).crossProduct(camdir).normalize();
 	Vect camdown = camright.crossProduct(camdir);
 	Camera scene_cam (campos, camdir, camright, camdown);
-	
-	// Color white_light (1.0, 1.0, 1.0, 0.0);
-	// Vect light_position (-7,10,-10);
-	// Vect light_position2 (-7,10,10);
-	// Light scene_light (light_position, white_light);
-	// Light scene_light2 (light_position2, white_light);
-	// vector<Light*> light_sources;
-	// light_sources.push_back(dynamic_cast<Light*>(&scene_light));
-	// light_sources.push_back(dynamic_cast<Light*>(&scene_light2));
-
 	int thisone, aa_index;
 	double xamnt, yamnt;
 	double tempRed, tempGreen, tempBlue;
