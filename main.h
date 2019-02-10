@@ -38,6 +38,7 @@ const Vect X (1,0,0);
 const Vect Y (0,1,0);
 const Vect Z (0,0,1);
 
+vector<Light *> light_sources;
 vector<vector<RGBType> > compute(int, int, double, vector<Object *>&);
 void get_data(string, int&, int&, double&, vector<Object *>&);
 int get_closest_index(vector<double> );
@@ -73,6 +74,14 @@ void get_data(string filepath, int &width, int &height, double &ambientlight, ve
 			}
 		}
     }
+    for (auto& x : json::iterator_wrapper(j["light"])) {
+		cout << x.value()["color"] << endl;
+		Vect pos((double)x.value()["position"][0], (double)x.value()["position"][1], (double)x.value()["position"][2]);
+		Color col((double)x.value()["color"][0], (double)x.value()["color"][1], (double)x.value()["color"][2], (double)x.value()["color"][3]);
+		Light *newLight =new Light(pos, col);
+		light_sources.push_back(dynamic_cast<Light*>(newLight));
+	}
+
 }
 
 
@@ -240,14 +249,14 @@ vector<vector<RGBType> > compute(int width, int height, double ambientlight, vec
 	Vect camdown = camright.crossProduct(camdir);
 	Camera scene_cam (campos, camdir, camright, camdown);
 	
-	Color white_light (1.0, 1.0, 1.0, 0.0);
-	Vect light_position (-7,10,-10);
-	Vect light_position2 (-7,10,10);
-	Light scene_light (light_position, white_light);
-	Light scene_light2 (light_position2, white_light);
-	vector<Light*> light_sources;
-	light_sources.push_back(dynamic_cast<Light*>(&scene_light));
-	light_sources.push_back(dynamic_cast<Light*>(&scene_light2));
+	// Color white_light (1.0, 1.0, 1.0, 0.0);
+	// Vect light_position (-7,10,-10);
+	// Vect light_position2 (-7,10,10);
+	// Light scene_light (light_position, white_light);
+	// Light scene_light2 (light_position2, white_light);
+	// vector<Light*> light_sources;
+	// light_sources.push_back(dynamic_cast<Light*>(&scene_light));
+	// light_sources.push_back(dynamic_cast<Light*>(&scene_light2));
 
 	int thisone, aa_index;
 	double xamnt, yamnt;

@@ -30,8 +30,8 @@ int main (int argc, char *argv[]) {
 	int width, height;
 	double ambientlight;
     // window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "RayTracer", NULL, NULL );
-	vector<Object *> scene_onjects;
-	get_data(filepath, width, height, ambientlight, scene_onjects);
+	vector<Object *> scene_objects;
+	get_data(filepath, width, height, ambientlight, scene_objects);
     window = glfwCreateWindow( width, height, "RayTracer", NULL, NULL );
     
     if ( !window ) {
@@ -51,7 +51,7 @@ int main (int argc, char *argv[]) {
     
 	vector<vector<RGBType> > data;
 
-	data = compute(width, height, ambientlight, scene_onjects);
+	data = compute(width, height, ambientlight, scene_objects);
 	render(window, data);
 	// render
 	return 0;
