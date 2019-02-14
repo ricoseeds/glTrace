@@ -3,9 +3,12 @@
 using namespace std;
 
 void drawPoint(double xpos, double ypos, GLubyte, GLubyte, GLubyte);
+void drawBigPoint(double xpos, double ypos);
 void render(GLFWwindow *, vector<vector<RGBType> >);
 void sweep(vector<vector<RGBType>> );
 GLfloat adjustY(double yVal);
+static void cursorPositionCallback( GLFWwindow *window, double xpos, double ypos );
+double xpos, ypos;
 int main (int argc, char *argv[]) {
 	string filepath = argv[1];
 	GLFWwindow *window;
@@ -27,6 +30,11 @@ int main (int argc, char *argv[]) {
     
     // Make the window's context current
     glfwMakeContextCurrent( window );
+    
+    //Callbacks
+    glfwSetCursorPosCallback( window, cursorPositionCallback );
+    glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_NORMAL );
+    glfwSetInputMode( window, GLFW_STICKY_MOUSE_BUTTONS, 1 );
 
     // OpenGL specifics
     glViewport( 0.0f, 0.0f, width, height ); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
@@ -48,9 +56,11 @@ void render(GLFWwindow *window, vector<vector<RGBType> > data){
     while ( !glfwWindowShouldClose( window ) )
     {
         glClear( GL_COLOR_BUFFER_BIT );
+        glfwGetCursorPos( window, &xpos, &ypos);
+        // glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_NORMAL );
         // drawPoint(10,10, 255, 0, 0); // draws a single pixel in the screen 
         sweep(data);
-        
+        drawBigPoint(xpos, ypos);
         // Swap front and back buffers
         glfwSwapBuffers( window );
     
@@ -80,4 +90,23 @@ void sweep(vector<vector<RGBType> > data){
 		}
 		
 	}
+}
+static void cursorPositionCallback( GLFWwindow *window, double xpos, double ypos )
+{
+    // std::cout << xpos << " : " << ypos << std::endl;
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        cout << "Press\n";
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
+            cout << "Release\n";
+        }
+    }
+}
+
+void drawBigPoint(double xpos, double ypos){
+    glEnable( GL_POINT_SMOOTH );
+    glPointSize( 8 );
+    glBegin(GL_POINTS);
+    glColor3ub( 255, 255, 255 );
+    glVertex2f((GLfloat)xpos, adjustY(ypos));
+    glEnd();
 }
