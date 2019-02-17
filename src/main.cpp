@@ -66,8 +66,9 @@ void render(GLFWwindow *window, vector<vector<RGBType> > data){
         sweep(data);
         //simulation logic
         drawBigPoint(xpos, ypos);
-        drawPrimaryRay(glm::vec3(3, 1.5, -30), glm::vec3(200, 200, 0));
-
+        // drawPrimaryRay(glm::vec3(3, 1.5, -30), glm::vec3(200, 200, 0));
+        drawPrimaryRay(glm::vec3(cpos.getVectX() + width/2, cpos.getVectY() +height/2, 0), glm::vec3(xpos, adjustY(ypos), 0));
+        
 
         // Swap front and back buffers
         glfwSwapBuffers( window );
@@ -101,7 +102,7 @@ void sweep(vector<vector<RGBType> > data){
 }
 static void cursorPositionCallback( GLFWwindow *window, double xpos, double ypos )
 {
-    // std::cout << xpos << " : " << ypos << std::endl;
+    std::cout << xpos << " : " << ypos << std::endl;
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         cout << "Press\n";
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
