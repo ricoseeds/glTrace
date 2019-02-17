@@ -1,5 +1,6 @@
-#include "../headers/main.h"
+#include "../include/main.h"
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 using namespace std;
 
@@ -9,9 +10,12 @@ void render(GLFWwindow *, vector<vector<RGBType> >);
 void sweep(vector<vector<RGBType>> );
 GLfloat adjustY(double yVal);
 static void cursorPositionCallback( GLFWwindow *window, double xpos, double ypos );
-void drawPrimaryRay(glm::vec3, glm::vec3);
+void shootRay(glm::vec3, glm::vec3, glm::vec3);
 void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode );
+void drawLightRays();
+glm::vec3 vec3Convert(Vect x);
 double xpos, ypos;
+glm::vec3 primary_ray(1.0f, 0.0f, 0.0f);
 int main (int argc, char *argv[]) {
 	string filepath = argv[1];
 	GLFWwindow *window;
@@ -67,8 +71,8 @@ void render(GLFWwindow *window, vector<vector<RGBType> > data){
         //simulation logic
         drawBigPoint(xpos, ypos);
         // drawPrimaryRay(glm::vec3(3, 1.5, -30), glm::vec3(200, 200, 0));
-        drawPrimaryRay(glm::vec3(cpos.getVectX() + width/2, cpos.getVectY() +height/2, 0), glm::vec3(xpos, adjustY(ypos), 0));
-        
+        shootRay(glm::vec3(cpos.getVectX() + width/2, cpos.getVectY() +height/2, 0), glm::vec3(xpos, adjustY(ypos), 0), primary_ray);
+        drawLightRays();        
 
         // Swap front and back buffers
         glfwSwapBuffers( window );
@@ -120,10 +124,10 @@ void drawBigPoint(double xpos, double ypos){
     glEnd();
 }
 
-void drawPrimaryRay(glm::vec3 from, glm::vec3 to){
-	glPointSize(10);
-	glLineWidth(2.5); 
-	glColor3f(1.0, 0.0, 0.0);
+void shootRay(glm::vec3 from, glm::vec3 to, glm::vec3 color){
+	glPointSize(1);
+	glLineWidth(1); 
+	glColor3f(color.x, color.y, color.z);
 	glBegin(GL_LINES);
     glVertex3f(from.x, from.y, from.z);
 	glVertex3f(to.x, to.y, to.z);
@@ -135,4 +139,22 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
     {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
+}
+
+void drawLightRays(){
+    for (int light_index = 0; light_index < light_sources.size(); light_index++) {
+        glm::vec3 pos = vec3Convert(light_sources[light_index]->getLightPosition());
+        shootRay( glm::vec3(pos.x, adjustY(pos.y), 0), glm::vec3(xpos, adjustY(ypos), 0), glm::vec3(1.0f, 1.0f, 0.0f));
+        if (light_index == 0) {
+            cout <<  "\n" << glm::to_string(pos) << "SOURCE1" << endl;
+        }
+        else {
+            cout << "\n" << glm::to_string(pos) << "SOURCE2" << endl;
+
+        }
+        
+    }
+}
+glm::vec3 vec3Convert(Vect x){
+    return glm::vec3((float)x.getVectX(), (float)x.getVectY(), (float)x.getVectZ());
 }
