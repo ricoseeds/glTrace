@@ -1,4 +1,5 @@
 #include "../headers/main.h"
+#include <glm/glm.hpp>
 
 using namespace std;
 
@@ -8,6 +9,8 @@ void render(GLFWwindow *, vector<vector<RGBType> >);
 void sweep(vector<vector<RGBType>> );
 GLfloat adjustY(double yVal);
 static void cursorPositionCallback( GLFWwindow *window, double xpos, double ypos );
+void drawPrimaryRay(glm::vec3, glm::vec3);
+void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode );
 double xpos, ypos;
 int main (int argc, char *argv[]) {
 	string filepath = argv[1];
@@ -19,6 +22,7 @@ int main (int argc, char *argv[]) {
     }
     // Create a windowed mode window and its OpenGL context
     // window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "RayTracer", NULL, NULL );
+    
 	vector<Object *> scene_objects;
 	get_data(filepath, width, height, ambientlight, scene_objects);
     window = glfwCreateWindow( width, height, "RayTracer", NULL, NULL );
@@ -35,7 +39,7 @@ int main (int argc, char *argv[]) {
     glfwSetCursorPosCallback( window, cursorPositionCallback );
     glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_NORMAL );
     glfwSetInputMode( window, GLFW_STICKY_MOUSE_BUTTONS, 1 );
-
+    glfwSetKeyCallback( window, KeyCallback );
     // OpenGL specifics
     glViewport( 0.0f, 0.0f, width, height ); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
     glMatrixMode( GL_PROJECTION ); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
@@ -60,7 +64,11 @@ void render(GLFWwindow *window, vector<vector<RGBType> > data){
         // glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_NORMAL );
         // drawPoint(10,10, 255, 0, 0); // draws a single pixel in the screen 
         sweep(data);
+        //simulation logic
         drawBigPoint(xpos, ypos);
+        drawPrimaryRay(glm::vec3(3, 1.5, -30), glm::vec3(200, 200, 0));
+
+
         // Swap front and back buffers
         glfwSwapBuffers( window );
     
@@ -109,4 +117,21 @@ void drawBigPoint(double xpos, double ypos){
     glColor3ub( 255, 255, 255 );
     glVertex2f((GLfloat)xpos, adjustY(ypos));
     glEnd();
+}
+
+void drawPrimaryRay(glm::vec3 from, glm::vec3 to){
+	glPointSize(10);
+	glLineWidth(2.5); 
+	glColor3f(1.0, 0.0, 0.0);
+	glBegin(GL_LINES);
+    glVertex3f(from.x, from.y, from.z);
+	glVertex3f(to.x, to.y, to.z);
+	glEnd();
+}
+void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode )
+{   
+    if ( GLFW_KEY_ESCAPE == key && GLFW_PRESS == action )
+    {
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    }
 }
