@@ -254,6 +254,27 @@ vector<vector<RGBType> > compute(int width, int height, double ambientlight, vec
 			Vect cam_ray_direction = camdir.vectAdd(camright.vectMult(xamnt - 0.5).vectAdd(camdown.vectMult(yamnt - 0.5))).normalize();
 			Ray cam_ray (cam_ray_origin, cam_ray_direction);
 			vector<double> intersections;
+			// if(x == 0 && y == 0){
+			// 	cout << "\nX : " << cam_ray_direction.getVectX() << " Y : " << cam_ray_direction.getVectY() << " Z : " << cam_ray_direction.getVectZ() << "\n";
+			// }
+			// if(x == 0 && y == 1){
+			// 	cout << "\nX : " << cam_ray_direction.getVectX() << " Y : " << cam_ray_direction.getVectY() << " Z : " << cam_ray_direction.getVectZ() << "\n";
+			// }
+			// if(x == 0 && y == 2){
+			// 	cout << "\nX : " << cam_ray_direction.getVectX() << " Y : " << cam_ray_direction.getVectY() << " Z : " << cam_ray_direction.getVectZ() << "\n";
+			// }
+			// if(x == 1 && y == 0){
+			// 	cout << "\nX : " << cam_ray_direction.getVectX() << " Y : " << cam_ray_direction.getVectY() << " Z : " << cam_ray_direction.getVectZ() << "\n";
+			// }
+			// if(x == 1 && y == 1){
+			// 	cout << "\nX : " << cam_ray_direction.getVectX() << " Y : " << cam_ray_direction.getVectY() << " Z : " << cam_ray_direction.getVectZ() << "\n";
+			// }
+			// if(x == 1 && y == 2){
+			// 	cout << "\nX : " << cam_ray_direction.getVectX() << " Y : " << cam_ray_direction.getVectY() << " Z : " << cam_ray_direction.getVectZ() << "\n";
+			// }
+			// if(x == 600 && y == 600){
+			// 	cout << "\nX : " << cam_ray_direction.getVectX() << " Y : " << cam_ray_direction.getVectY() << " Z : " << cam_ray_direction.getVectZ() << "\n";
+			// }
 			for (int index = 0; index < scene_objects.size(); index++) {
 				intersections.push_back(scene_objects.at(index)->findIntersection(cam_ray));
 			}

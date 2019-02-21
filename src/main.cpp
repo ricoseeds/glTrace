@@ -13,6 +13,7 @@ static void cursorPositionCallback( GLFWwindow *window, double xpos, double ypos
 void shootRay(glm::vec3, glm::vec3, glm::vec3);
 void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode );
 void drawLightRays();
+void animate(int, int);
 glm::vec3 vec3Convert(Vect x);
 double xpos, ypos;
 glm::vec3 primary_ray(1.0f, 0.0f, 0.0f);
@@ -73,6 +74,7 @@ void render(GLFWwindow *window, vector<vector<RGBType> > data){
         // drawPrimaryRay(glm::vec3(3, 1.5, -30), glm::vec3(200, 200, 0));
         shootRay(glm::vec3(cpos.getVectX() + width/2, cpos.getVectY() +height/2, 0), glm::vec3(xpos, adjustY(ypos), 0), primary_ray);
         drawLightRays();        
+        // animate(xpos, ypos);
 
         // Swap front and back buffers
         glfwSwapBuffers( window );
@@ -81,7 +83,28 @@ void render(GLFWwindow *window, vector<vector<RGBType> > data){
         glfwPollEvents( );
     }
 }
-
+void animate(int x, int y){
+    // vector<double> amount;
+    // amount = get_x_y_amount(width, height, 500, 500);
+    // Vect campos(cpos);
+	// Vect look_at(look);
+	// Vect diff_btw (campos.getVectX() - look_at.getVectX(), campos.getVectY() - look_at.getVectY(), campos.getVectZ() - look_at.getVectZ());
+	// Vect camdir = diff_btw.negative().normalize();
+	// Vect camright = Vect(Y).crossProduct(camdir).normalize();
+	// Vect camdown = camright.crossProduct(camdir);
+    // double xamnt, yamnt;
+    // xamnt = amount[0];
+    // yamnt = amount[1];
+    // Vect cam_ray_origin = campos;
+    // Vect cam_ray_direction = camdir.vectAdd(camright.vectMult(xamnt - 0.5).vectAdd(camdown.vectMult(yamnt - 0.5))).normalize();
+    // Ray cam_ray (cam_ray_origin, cam_ray_direction);
+    // vector<double> intersections;
+    // for (int index = 0; index < scene_objects.size(); index++) {
+    //     intersections.push_back(scene_objects.at(index)->findIntersection(cam_ray));
+    // }
+    
+    // unsigned int index_of_winning_object = get_closest_index(intersections);
+}
 GLfloat adjustY(double yVal){
     return (GLfloat)(-yVal + height);
 }
@@ -106,7 +129,7 @@ void sweep(vector<vector<RGBType> > data){
 }
 static void cursorPositionCallback( GLFWwindow *window, double xpos, double ypos )
 {
-    // std::cout << xpos << " : " << ypos << std::endl;
+    std::cout << xpos << " : " << ypos << std::endl;
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         cout << "Press\n";
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
