@@ -71,11 +71,11 @@ void render(GLFWwindow *window, vector<vector<RGBType> > data){
         // drawPoint(10,10, 255, 0, 0); // draws a single pixel in the screen 
         sweep(data);
         //simulation logic
-        drawBigPoint(xpos, ypos);
+        // drawBigPoint(xpos, adjustY(ypos));
         // drawPrimaryRay(glm::vec3(3, 1.5, -30), glm::vec3(200, 200, 0));
         shootRay(glm::vec3(cpos.getVectX() + width/2, cpos.getVectY() +height/2, 0), glm::vec3(xpos, adjustY(ypos), 0), primary_ray);
         drawLightRays();        
-        // animate(xpos, ypos);
+        animate(xpos, adjustY(ypos));
 
         // Swap front and back buffers
         glfwSwapBuffers( window );
@@ -85,34 +85,42 @@ void render(GLFWwindow *window, vector<vector<RGBType> > data){
     }
 }
 void animate(int x, int y){
-    // vector<double> amount;
+    vector<double> amount;
     // amount = get_x_y_amount(width, height, 500, 500);
-    // Vect campos(cpos);
-	// Vect look_at(look);
-	// Vect diff_btw (campos.getVectX() - look_at.getVectX(), campos.getVectY() - look_at.getVectY(), campos.getVectZ() - look_at.getVectZ());
-	// Vect camdir = diff_btw.negative().normalize();
-	// Vect camright = Vect(Y).crossProduct(camdir).normalize();
-	// Vect camdown = camright.crossProduct(camdir);
-    // double xamnt, yamnt;
-    // xamnt = amount[0];
-    // yamnt = amount[1];
-    // Vect cam_ray_origin = campos;
-    // Vect cam_ray_direction = camdir.vectAdd(camright.vectMult(xamnt - 0.5).vectAdd(camdown.vectMult(yamnt - 0.5))).normalize();
-    // Ray cam_ray (cam_ray_origin, cam_ray_direction);
-    // vector<double> intersections;
-    // for (int index = 0; index < scene_objects.size(); index++) {
-    //     intersections.push_back(scene_objects.at(index)->findIntersection(cam_ray));
-    // }
+    amount = get_x_y_amount(width, height, x, y);
+    cout << "\nXAMNT : " << amount[0] << " Yamt: " << amount[1] << "\n";
+    Vect campos(cpos);
+	Vect look_at(look);
+	Vect diff_btw (campos.getVectX() - look_at.getVectX(), campos.getVectY() - look_at.getVectY(), campos.getVectZ() - look_at.getVectZ());
+	Vect camdir = diff_btw.negative().normalize();
+	Vect camright = Vect(Y).crossProduct(camdir).normalize();
+	Vect camdown = camright.crossProduct(camdir);
+    double xamnt, yamnt;
+    xamnt = amount[0];
+    yamnt = amount[1];
+    Vect cam_ray_origin = campos;
+    Vect cam_ray_direction = camdir.vectAdd(camright.vectMult(xamnt - 0.5).vectAdd(camdown.vectMult(yamnt - 0.5))).normalize();
+    Ray cam_ray (cam_ray_origin, cam_ray_direction);
+    vector<double> intersections;
+    for (int index = 0; index < scene_objects.size(); index++) {
+        intersections.push_back(scene_objects.at(index)->findIntersection(cam_ray));
+    }
     
-    // unsigned int index_of_winning_object = get_closest_index(intersections);
+    unsigned int index_of_winning_object = get_closest_index(intersections);
+    if (index_of_winning_object == -1) {
+        drawPoint(x, adjustY(y), 255, 0, 0);
+    }
+    else if (intersections[index_of_winning_object] > ACCURACY ) {
+        drawPoint(x, adjustY(y), 0, 255, 0);
+    }
 }
 GLfloat adjustY(double yVal){
     return (GLfloat)(-yVal + height);
 }
 
 void drawPoint(double xpos, double ypos, GLubyte red, GLubyte green, GLubyte blue){
-    // glEnable( GL_POINT_SMOOTH );
-    glPointSize( 1 );
+    glEnable( GL_POINT_SMOOTH );
+    glPointSize( 8 );
     glBegin(GL_POINTS);
     glColor3ub( red, green, blue );
     glVertex2i((GLfloat)xpos, adjustY(ypos));
@@ -144,7 +152,7 @@ void drawBigPoint(double xpos, double ypos){
     glPointSize( 8 );
     glBegin(GL_POINTS);
     glColor3ub( 255, 255, 255 );
-    glVertex2f((GLfloat)xpos, adjustY(ypos));
+    glVertex2f((GLfloat)xpos, ypos);
     glEnd();
 }
 
