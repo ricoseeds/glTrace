@@ -14,7 +14,7 @@
 
 ![screenshot from 2019-02-11 03 15 03](https://user-images.githubusercontent.com/17334660/52540071-7fe6cb00-2dab-11e9-8f7e-fe9eb39c88c6.png)
 
-##### Example Input :
+##### Example Input 1 :
 
 ```javascript
 {
@@ -80,11 +80,56 @@
     "light" : [
         {
             "position" :[-7, 10, -10],
-            "color" :[1.0, 1.0, .0, 0.0]
+            "color" :[1.0, 1.0, 0.0, 0.0]
         },
         {
             "position" :[-7, 10, 10],
             "color" :[1.0, 0, 1.0, 0.0]
+        }
+    ]
+}
+```
+##### Example Input 2 :
+
+```javascript
+{
+    "height" : 600,
+    "width" : 600,
+    "camera" :{
+        "position" : [0, 0, -4],
+        "lookat" : [0, 1, 0]
+    },
+    "ambient_light" : 0.2,
+    "scene" : [
+        {
+            "Sphere" : {
+                "radius" : 0.5,
+                "color" : [0.0, 0.1, 0.0, 0.5],
+                "position" : [-0.5, 0, 0]
+            }
+        },
+        {
+            "Sphere" : {
+                "radius" : 0.5,
+                "color" : [0.5, 0.5, 0.0, 0.5],
+                "position" : [0.5, 0, 0]
+            }
+        },
+        {
+            "Plane" : {
+                "normal" : [0, 0.5, 0],
+                "color" : [1.0, 1.0, 1.0, 0.0]
+            }
+        }
+    ],
+    "light" : [
+        {
+            "position" :[-7, 10, -10],
+            "color" :[1.0, 1.0, 1.0, 0.0]
+        },
+        {
+            "position" :[7, 10, 10],
+            "color" :[1.0, 1.0, 1.0, 0.0]
         }
     ]
 }

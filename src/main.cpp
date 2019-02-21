@@ -122,6 +122,7 @@ void animate(int x, int y){
         cout << "WINNINGZ " << winning_object_normal.getVectZ() << endl;
         glm::vec3 dir_vec = vec3Convert(winning_object_normal.negative());
         dir_vec.z = 0.0f;
+        //LOOP here changing reflection ray to camray_dir
         shootRay(glm::vec3(x, y, 0), dir_vec * 20.0f, glm::vec3(0.0, 0.0, 1.0));
         double dot1 = winning_object_normal.dotProduct(intersecting_ray_direction.negative());
 		Vect scalar1 = winning_object_normal.vectMult(dot1);
