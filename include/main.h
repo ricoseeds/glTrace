@@ -8,7 +8,6 @@
 
 #include "Vect.h"
 #include "Ray.h"
-#include "Camera.h"
 #include "Color.h"
 #include "Light.h"
 #include "Object.h"
@@ -239,7 +238,6 @@ vector<vector<RGBType> > compute(int width, int height, double ambientlight, vec
 	Vect camdir = diff_btw.negative().normalize();
 	Vect camright = Vect(Y).crossProduct(camdir).normalize();
 	Vect camdown = camright.crossProduct(camdir);
-	Camera scene_cam (campos, camdir, camright, camdown);
 	double xamnt, yamnt;
 	double tempRed, tempGreen, tempBlue;
 	vector<vector<RGBType> > sweepxy;
@@ -252,7 +250,7 @@ vector<vector<RGBType> > compute(int width, int height, double ambientlight, vec
 			amount = get_x_y_amount(width, height, x, y);
 			xamnt = amount[0];
 			yamnt = amount[1];
-			Vect cam_ray_origin = scene_cam.getCameraPosition();
+			Vect cam_ray_origin = campos;
 			Vect cam_ray_direction = camdir.vectAdd(camright.vectMult(xamnt - 0.5).vectAdd(camdown.vectMult(yamnt - 0.5))).normalize();
 			Ray cam_ray (cam_ray_origin, cam_ray_direction);
 			vector<double> intersections;

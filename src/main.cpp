@@ -106,7 +106,7 @@ void sweep(vector<vector<RGBType> > data){
 }
 static void cursorPositionCallback( GLFWwindow *window, double xpos, double ypos )
 {
-    std::cout << xpos << " : " << ypos << std::endl;
+    // std::cout << xpos << " : " << ypos << std::endl;
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         cout << "Press\n";
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE) {
@@ -145,13 +145,13 @@ void drawLightRays(){
     for (int light_index = 0; light_index < light_sources.size(); light_index++) {
         glm::vec3 pos = vec3Convert(light_sources[light_index]->getLightPosition());
         shootRay( glm::vec3(pos.x, adjustY(pos.y), 0), glm::vec3(xpos, adjustY(ypos), 0), glm::vec3(1.0f, 1.0f, 0.0f));
-        if (light_index == 0) {
-            cout <<  "\n" << glm::to_string(pos) << "SOURCE1" << endl;
-        }
-        else {
-            cout << "\n" << glm::to_string(pos) << "SOURCE2" << endl;
+        // if (light_index == 0) {
+        //     cout <<  "\n" << glm::to_string(pos) << "SOURCE1" << endl;
+        // }
+        // else {
+        //     cout << "\n" << glm::to_string(pos) << "SOURCE2" << endl;
 
-        }
+        // }
         
     }
 }
