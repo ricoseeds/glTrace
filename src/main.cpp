@@ -74,7 +74,7 @@ void render(GLFWwindow *window, vector<vector<RGBType> > data){
         // drawBigPoint(xpos, adjustY(ypos));
         // drawPrimaryRay(glm::vec3(3, 1.5, -30), glm::vec3(200, 200, 0));
         shootRay(glm::vec3(cpos.getVectX() + width/2, cpos.getVectY() +height/2, 0), glm::vec3(xpos, adjustY(ypos), 0), primary_ray);
-        drawLightRays();        
+        // drawLightRays();        
         animate(xpos, adjustY(ypos));
 
         // Swap front and back buffers
@@ -109,9 +109,27 @@ void animate(int x, int y){
     unsigned int index_of_winning_object = get_closest_index(intersections);
     if (index_of_winning_object == -1) {
         drawPoint(x, adjustY(y), 255, 0, 0);
+
     }
     else if (intersections[index_of_winning_object] > ACCURACY ) {
+        drawLightRays();
         drawPoint(x, adjustY(y), 0, 255, 0);
+        Vect intersection_position = cam_ray_origin.vectAdd(cam_ray_direction.vectMult(intersections.at(index_of_winning_object)));
+        Vect intersecting_ray_direction = cam_ray_direction;
+        Vect winning_object_normal = scene_objects[index_of_winning_object]->getNormalAt(intersection_position);
+        cout << "WINNINGX " << winning_object_normal.getVectX() << endl;
+        cout << "WINNINGY " << winning_object_normal.getVectY() << endl;
+        cout << "WINNINGZ " << winning_object_normal.getVectZ() << endl;
+        glm::vec3 dir_vec = vec3Convert(winning_object_normal.negative());
+        dir_vec.z = 0.0f;
+        shootRay(glm::vec3(x, y, 0), dir_vec * 20.0f, glm::vec3(0.0, 0.0, 1.0));
+        double dot1 = winning_object_normal.dotProduct(intersecting_ray_direction.negative());
+		Vect scalar1 = winning_object_normal.vectMult(dot1);
+		Vect add1 = scalar1.vectAdd(intersecting_ray_direction);
+		Vect scalar2 = add1.vectMult(2);
+		Vect add2 = intersecting_ray_direction.negative().vectAdd(scalar2);
+		Vect reflection_direction = add2.normalize();
+        shootRay(glm::vec3(x, y, 0), vec3Convert(reflection_direction) * 20.0f, glm::vec3(0.0, 1.0, 1.0));
     }
 }
 GLfloat adjustY(double yVal){
