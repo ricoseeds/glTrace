@@ -38,11 +38,12 @@ int width, height;
 double ambientlight;
 Vect cpos, look;
 vector<Light *> light_sources;
+vector<Object *> scene_objects;
 vector<vector<RGBType> > compute(int, int, double, vector<Object *>&);
 void get_data(string, int&, int&, double&, vector<Object *>&);
 int get_closest_index(vector<double> );
 vector<double> get_x_y_amount(int, int, int, int);
-void get_data(string filepath, int &width, int &height, double &ambientlight, vector<Object *> &scene_objects){
+void get_data(string filepath, int &width, int &height, double &ambientlight){
     std::ifstream ifs(filepath);
     json j = json::parse(ifs);
     width = (int) j["width"];
@@ -129,7 +130,7 @@ int get_closest_index(vector<double> object_intersections) {
         return index;
     }
 }
-Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, vector<Object*> scene_objects, int index_of_winning_object, vector<Light*> light_sources, double accuracy, double ambientlight) {
+Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, int index_of_winning_object, double accuracy, double ambientlight) {
 	
 	Color winning_object_color = scene_objects[index_of_winning_object]->getColor();
 	Vect winning_object_normal = scene_objects[index_of_winning_object]->getNormalAt(intersection_position);
@@ -165,7 +166,7 @@ Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, ve
 				Vect reflection_intersection_position = intersection_position.vectAdd(reflection_direction.vectMult(reflection_intersections.at(index_of_winning_object_with_reflection)));
 				Vect reflection_intersection_ray_direction = reflection_direction;
 				
-				Color reflection_intersection_color = getColorAt(reflection_intersection_position, reflection_intersection_ray_direction, scene_objects, index_of_winning_object_with_reflection, light_sources, accuracy, ambientlight);
+				Color reflection_intersection_color = getColorAt(reflection_intersection_position, reflection_intersection_ray_direction, index_of_winning_object_with_reflection, accuracy, ambientlight);
 				
 				final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
 			}
@@ -229,7 +230,7 @@ Color getColorAt(Vect intersection_position, Vect intersecting_ray_direction, ve
 	return final_color.clip();
 }
 
-vector<vector<RGBType> > compute(int width, int height, double ambientlight, vector<Object *>&scene_objects ) {
+vector<vector<RGBType> > compute(int width, int height, double ambientlight) {
 	double aspectratio = (double)width/(double)height;
 	double accuracy = ACCURACY;
 	Vect campos(cpos);
@@ -288,7 +289,7 @@ vector<vector<RGBType> > compute(int width, int height, double ambientlight, vec
 				Vect intersection_position = cam_ray_origin.vectAdd(cam_ray_direction.vectMult(intersections.at(index_of_winning_object)));
 				Vect intersecting_ray_direction = cam_ray_direction;
 
-				Color intersection_color = getColorAt(intersection_position, intersecting_ray_direction, scene_objects, index_of_winning_object, light_sources, accuracy, ambientlight);
+				Color intersection_color = getColorAt(intersection_position, intersecting_ray_direction, index_of_winning_object, accuracy, ambientlight);
 				
 				tempRed = intersection_color.getColorRed();
 				tempGreen = intersection_color.getColorGreen();

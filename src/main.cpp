@@ -17,6 +17,7 @@ void animate(int, int);
 glm::vec3 vec3Convert(Vect x);
 double xpos, ypos;
 glm::vec3 primary_ray(1.0f, 0.0f, 0.0f);
+
 int main (int argc, char *argv[]) {
 	string filepath = argv[1];
 	GLFWwindow *window;
@@ -28,8 +29,8 @@ int main (int argc, char *argv[]) {
     // Create a windowed mode window and its OpenGL context
     // window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "RayTracer", NULL, NULL );
     
-	vector<Object *> scene_objects;
-	get_data(filepath, width, height, ambientlight, scene_objects);
+	// vector<Object *> scene_objects;
+	get_data(filepath, width, height, ambientlight);
     window = glfwCreateWindow( width, height, "RayTracer", NULL, NULL );
     
     if ( !window ) {
@@ -54,7 +55,7 @@ int main (int argc, char *argv[]) {
     
 	vector<vector<RGBType> > data;
 
-	data = compute(width, height, ambientlight, scene_objects);
+	data = compute(width, height, ambientlight);
 	render(window, data);
 	// render
 	return 0;
